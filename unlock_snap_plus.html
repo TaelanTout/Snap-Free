@@ -1,79 +1,54 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Déverrouiller Snap+</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Débloquer Snap+</title>
   <style>
-    :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;}
-    html,body{height:100%;margin:0}
-    body{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a,#0f3b66);color:#fff}
-    .card{background:rgba(255,255,255,0.06);backdrop-filter:blur(6px);padding:28px;border-radius:12px;text-align:center;width:min(520px,92%);box-shadow:0 6px 20px rgba(2,6,23,0.6)}
-    h1{margin:0 0 12px;font-size:1.6rem}
-    p{margin:0 0 20px;opacity:0.9}
-    button{appearance:none;border:0;padding:12px 18px;border-radius:10px;font-size:1rem;cursor:pointer}
-    .primary{background:linear-gradient(90deg,#06b6d4,#3b82f6);color:#022;box-shadow:0 6px 18px rgba(59,130,246,0.18)}
-    .secondary{background:transparent;border:1px solid rgba(255,255,255,0.12);color:inherit;margin-left:10px}
-    small{display:block;margin-top:12px;opacity:0.8}
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    button {
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background-color: #2563eb;
+    }
   </style>
 </head>
 <body>
-  <main class="card" role="main">
-    <h1>Déverrouiller Snap+</h1>
-    <p>Appuie sur le bouton ci-dessous pour passer en plein écran et accéder à <strong>Snap+</strong>.</p>
-    <div>
-      <button id="unlockBtn" class="primary">Déverrouiller Snap+</button>
-      <button id="cancelBtn" class="secondary">Annuler</button>
-    </div>
-  </main>
+  <div>
+    <h1>Débloquer Snap+</h1>
+    <p>Appuie sur le bouton ci-dessous pour accéder à Snap+.</p>
+    <button id="btn">Débloquer Snap+</button>
+  </div>
 
   <script>
-    (function (){
-      const unlockBtn = document.getElementById('unlockBtn');
-      const cancelBtn = document.getElementById('cancelBtn');
-      const hint = document.getElementById('hint');
-      let running = false;
-
-      function goToSnapPlus(){
-        // encodage du nom de fichier pour éviter soucis avec le '+' dans certaines circonstances
-        const target = encodeURI('Snap+.html');
-        window.location.href = target;
-      }
-
-      async function requestFullscreen() {
-        const el = document.documentElement;
-        if (el.requestFullscreen) return el.requestFullscreen();
-        if (el.webkitRequestFullscreen) return el.webkitRequestFullscreen();
-        if (el.msRequestFullscreen) return el.msRequestFullscreen();
-        return Promise.reject(new Error('API Fullscreen non disponible'));
-      }
-
-      unlockBtn.addEventListener('click', async () => {
-        if (running) return;
-        running = true;
-        unlockBtn.disabled = true;
-        hint.textContent = 'Tentative de passage en plein écran…';
-
-        try {
-          // On tente d'entrer en plein écran et, une fois terminé (ou en échec), on navigue.
-          await requestFullscreen().catch(() => {});
-        } catch (err) {
-          // ignore
-        } finally {
-          // navigation même si le plein écran a échoué (comportement demandé)
-          goToSnapPlus();
+    document.getElementById('btn').addEventListener('click', async () => {
+      try {
+        if (document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
         }
-      });
-
-      cancelBtn.addEventListener('click', () => {
-        hint.textContent = 'Action annulée.';
-      });
-
-      // Si l'utilisateur quitte le plein écran sans navigation, on pourrait gérer ça ici
-      document.addEventListener('fullscreenerror', () => {
-        hint.textContent = 'Impossible d'activer le plein écran. Redirection en cours...';
-      });
-    })();
+      } catch (e) {
+        console.warn('Impossible de passer en plein écran.');
+      }
+      window.location.href = 'Snap+.html';
+    });
   </script>
 </body>
 </html>
