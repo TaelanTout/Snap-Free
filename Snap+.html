@@ -1,5 +1,54 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Snap+</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      transition: background 0.6s;
+    }
+    #unlock-screen, #snapplus {
+      transition: opacity 0.6s;
+    }
+    #snapplus {
+      display: none;
+      opacity: 0;
+    }
+    button {
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background-color: #2563eb;
+    }
+  </style>
+</head>
+<body>
+  <!-- Écran de déblocage -->
+  <div id="unlock-screen">
+    <h1>Débloquer Snap+</h1>
+    <p>Appuie sur le bouton ci-dessous pour accéder à Snap+.</p>
+    <button id="btn">Débloquer Snap+</button>
+  </div>
+
+  <!-- Contenu de Snap+.html -->
+  <div id="snapplus">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -324,4 +373,30 @@
             </div>
         </div>
     </body>
+  </div>
+
+  <script>
+    const btn = document.getElementById('btn');
+    const unlock = document.getElementById('unlock-screen');
+    const snapplus = document.getElementById('snapplus');
+
+    btn.addEventListener('click', async () => {
+      try {
+        if (document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
+        }
+      } catch (e) {
+        console.warn('Impossible de passer en plein écran.');
+      }
+
+      // Transition entre les écrans
+      unlock.style.opacity = '0';
+      setTimeout(() => {
+        unlock.style.display = 'none';
+        snapplus.style.display = 'block';
+        setTimeout(() => snapplus.style.opacity = '1', 100);
+      }, 600);
+    });
+  </script>
+</body>
 </html>
