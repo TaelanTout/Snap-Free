@@ -94,9 +94,227 @@
 <body>
   <!-- Écran de déblocage -->
   <div id="unlock-screen">
-    <h1>Débloquer Snap+</h1>
-    <p>Appuie sur le bouton ci-dessous pour accéder à Snap+.</p>
-    <button id="btn">Débloquer Snap+</button>
+ 	<style>
+	  :root{
+	    --bg1: #fffc00; /* jaune vif inspiré */
+	    --bg2: #ffd700;
+	    --card-bg: #ffffff;
+	    --accent: #111827;
+	    --muted: #6b7280;
+	    font-family: Inter, "Segoe UI", Roboto, system-ui, -apple-system, "Helvetica Neue", Arial;
+	  }
+	  *{box-sizing:border-box}
+	  html,body{height:100%}
+	  body{
+	    margin:0;
+	    display:grid;
+	    place-items:center;
+	    min-height:100vh;
+	    background: linear-gradient(135deg,var(--bg1) 0%, var(--bg2) 60%);
+	    -webkit-font-smoothing:antialiased;
+	    -moz-osx-font-smoothing:grayscale;
+	  }
+	
+	  /* decorative blob */
+	  .blob{
+	    position:fixed;
+	    width:520px;
+	    height:520px;
+	    right:-120px;
+	    top:-120px;
+	    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.45), rgba(255,255,255,0.05) 40%);
+	    filter: blur(40px);
+	    transform: rotate(10deg);
+	    border-radius: 40% 60% 30% 70% / 60% 30% 70% 40%;
+	    pointer-events:none;
+	  }
+	
+	  .container{
+	    width:min(960px, 94vw);
+	    display:grid;
+	    grid-template-columns: 1fr 420px;
+	    gap:28px;
+	    align-items:center;
+	  }
+	
+	  /* left big promo area */
+	  .hero{
+	    color:var(--accent);
+	    padding:36px;
+	    display:flex;
+	    flex-direction:column;
+	    gap:18px;
+	  }
+	  .logo-mark{
+	    width:84px;
+	    height:84px;
+	    border-radius:20px;
+	    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.7));
+	    box-shadow: 0 6px 24px rgba(17,24,39,0.12);
+	    display:grid;
+	    place-items:center;
+	    font-weight:700;
+	    font-size:28px;
+	    color:var(--accent);
+	  }
+	  h1{margin:0;font-size:32px;line-height:1.02}
+	  p.lead{margin:0;color:var(--muted);max-width:46ch;font-size:15px}
+	
+	  /* Card / form */
+	  .card{
+	    background:var(--card-bg);
+	    border-radius:14px;
+	    padding:26px;
+	    box-shadow: 0 10px 30px rgba(17,24,39,0.12);
+	    min-width:280px;
+	  }
+	  form{display:flex;flex-direction:column;gap:12px}
+	  label{font-size:13px;color:var(--muted)}
+	  .input{
+	    display:flex;
+	    gap:8px;
+	    align-items:center;
+	    padding:12px 14px;
+	    border-radius:10px;
+	    border:1px solid rgba(17,24,39,0.08);
+	    background:#fff;
+	  }
+	  .input input{
+	    border:0;outline:0;font-size:15px;width:100%;
+	    background:transparent;
+	  }
+	  .hint{font-size:13px;color:var(--muted);margin-top:6px}
+	
+	  .actions{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:6px}
+	  .btn{
+	    background:var(--accent);
+	    color:white;
+	    padding:10px 14px;
+	    border-radius:10px;
+	    border:0;
+	    font-weight:600;
+	    cursor:pointer;
+	  }
+	  .btn.ghost{
+	    background:transparent;
+	    color:var(--accent);
+	    border:1px solid rgba(17,24,39,0.06);
+	  }
+	  .small{font-size:13px;color:var(--muted)}
+	
+	  .or{
+	    text-align:center;margin:6px 0;color:var(--muted);font-size:13px;
+	  }
+	
+	  /* accessibility focus */
+	  input:focus, button:focus{
+	    box-shadow: 0 0 0 4px rgba(17,24,39,0.06);
+	    outline: none;
+	  }
+	
+	  /* footer text */
+	  .footer{
+	    margin-top:10px;
+	    font-size:13px;color:var(--muted);
+	    text-align:center;
+	  }
+	
+	  /* responsive */
+	  @media (max-width:880px){
+	    .container{grid-template-columns:1fr;align-items:stretch}
+	    .hero{order:2}
+	    .card{order:1}
+	    .blob{display:none}
+	  }
+	</style>
+</head>
+<body>
+  <div class="blob" aria-hidden="true"></div>
+
+  <main class="container" role="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="logo-mark" aria-hidden="true">SL</div>
+      <h1 id="hero-title">Reste connecté. Partage instantanément.</h1>
+      <p class="lead">Un espace simple et rapide pour partager des moments. Connexion sécurisée, animations fluides et interface mobile-friendly.</p>
+      <p class="hint">Ce design est seulement *inspiré* — pas une copie d'une page officielle.</p>
+    </section>
+
+    <aside class="card" aria-labelledby="login-title">
+      <h2 id="login-title" style="margin:0 0 6px 0;font-size:20px">Se connecter</h2>
+      <form id="loginForm" autocomplete="on" novalidate>
+        <div>
+          <label for="identifier">Téléphone, email ou pseudo</label>
+          <div class="input">
+            <input id="identifier" name="identifier" type="text" inputmode="text" required aria-required="true" placeholder="ex : +33 6 12 34 56 78 ou user@example.com" />
+          </div>
+        </div>
+
+        <div>
+          <label for="password">Mot de passe</label>
+          <div class="input" style="justify-content:space-between;">
+            <input id="password" name="password" type="password" required aria-required="true" placeholder="••••••••" />
+            <button type="button" aria-label="Afficher le mot de passe" id="togglePwd" class="btn ghost" style="padding:6px 8px;font-size:13px">Afficher</button>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" type="submit">Se connecter</button>
+          <button type="button" class="btn ghost" id="phoneLogin">Connexion par SMS</button>
+        </div>
+
+        <div class="or" role="separator">ou</div>
+
+        <div style="display:flex;gap:10px;flex-direction:column">
+          <button type="button" class="btn ghost" id="create">Créer un compte</button>
+          <button type="button" class="btn ghost" id="help">Mot de passe oublié ?</button>
+        </div>
+
+        <p class="footer">En continuant vous acceptez les <a href="#" tabindex="-1">conditions</a> et la <a href="#" tabindex="-1">politique de confidentialité</a>.</p>
+      </form>
+    </aside>
+  </main>
+
+<script>
+  // Simple client-side behaviour to integrate or test quickly.
+  (function(){
+    const form = document.getElementById('loginForm');
+    const toggle = document.getElementById('togglePwd');
+    const pwd = document.getElementById('password');
+
+    toggle.addEventListener('click', () => {
+      const t = pwd.type === 'password' ? 'text' : 'password';
+      pwd.type = t;
+      toggle.textContent = t === 'password' ? 'Afficher' : 'Cacher';
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Exemple : validation simple
+      const id = document.getElementById('identifier').value.trim();
+      const pass = pwd.value;
+      if(!id || pass.length < 4){
+        alert('Veuillez entrer un identifiant valide et un mot de passe (4+ caractères).');
+        return;
+      }
+      // Ici : appeler ton endpoint d'auth (ex: fetch('/api/login', {method:'POST', body:...}))
+      // Pour démonstration seulement :
+      console.log('Tentative de connexion', {identifier: id});
+      alert('Formulaire soumis (exemple). Intègre ici ton code d’authentification côté serveur.');
+    });
+
+    // quick hooks
+    document.getElementById('phoneLogin').addEventListener('click', () => {
+      alert('Flux SMS — à implémenter côté serveur / provider.');
+    });
+    document.getElementById('create').addEventListener('click', () => {
+      location.href = '/signup'; // adapte
+    });
+    document.getElementById('help').addEventListener('click', () => {
+      location.href = '/reset';
+    });
+  })();
+</script>
+</body>
   </div>
 
   <!-- Contenu de Snap+.html (collé tel que fourni) -->
